@@ -4,19 +4,19 @@ import ApexCharts from 'apexcharts';
 const User = () => {
     const salesPurchaseRef = useRef(null);
     const customerChartRef = useRef(null);
-    const [summary, setSummary] = useState({ 
-        today_sales: 0, 
-        monthly_sales: 0, 
-        total_expenses: 0, 
+    const [summary, setSummary] = useState({
+        today_sales: 0,
+        monthly_sales: 0,
+        total_expenses: 0,
         available_funds: 0,
         estimated_profit: 0,
         out_of_stock_count: 0,
         total_sales: 0,
         total_purchases: 0,
-        history: [] 
+        history: []
     });
     const [cotisationStats, setCotisationStats] = useState({ summary: {}, recent: [], withdrawals: [] });
-    
+
     // Modal state
     const [showModal, setShowModal] = useState(null); // 'stockout', 'history', 'cotisation_in', 'cotisation_out'
     const [outOfStockList, setOutOfStockList] = useState([]);
@@ -33,7 +33,7 @@ const User = () => {
 
     const fetchCotisationStats = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/summary');
+            const response = await fetch('http://localhost:3001/api/summary');
             const data = await response.json();
             setCotisationStats(data);
         } catch (err) {
@@ -107,9 +107,9 @@ const User = () => {
 
     useEffect(() => {
         // Cotisation Radial Chart
-        if (customerChartRef.current) {
-            const inTotal = cotisationStats.recent.reduce((sum, c) => sum + c.amount, 0);
-            const outTotal = cotisationStats.withdrawals.reduce((sum, w) => sum + w.amount, 0);
+        if (customerChartRef.current && cotisationStats) {
+            const inTotal = cotisationStats.recent?.reduce((sum, c) => sum + (Number(c.amount) || 0), 0) || 0;
+            const outTotal = cotisationStats.withdrawals?.reduce((sum, w) => sum + (Number(w.amount) || 0), 0) || 0;
             const total = inTotal + outTotal;
             const inPercent = total > 0 ? Math.round((inTotal / total) * 100) : 0;
             const outPercent = total > 0 ? Math.round((outTotal / total) * 100) : 0;
@@ -138,7 +138,7 @@ const User = () => {
                     },
                 },
                 stroke: { lineCap: 'round' },
-                labels: ['Entrées', 'Sorties'],
+                labels: ['Cotisations', 'Retraits'],
             };
             const chart = new ApexCharts(customerChartRef.current, options);
             chart.render();
@@ -175,7 +175,7 @@ const User = () => {
                 </table>
             );
         } else if (showModal === 'cotisation_in') {
-            title = 'Détails des Cotisations (Entrées)';
+            title = 'Détails des Cotisations';
             content = (
                 <table className="table">
                     <thead>
@@ -199,7 +199,7 @@ const User = () => {
                 </table>
             );
         } else if (showModal === 'cotisation_out') {
-            title = 'Détails des Retraits (Sorties)';
+            title = 'Détails des Retraits';
             content = (
                 <table className="table">
                     <thead>
@@ -283,7 +283,7 @@ const User = () => {
                             <div>
                                 <h2 className="mb-3 fs-6">Ventes (Aujourd'hui)</h2>
                                 <h3 className="fw-bold mb-0">{(summary.today_sales || 0).toLocaleString()} F</h3>
-                                <p className="text-primary mb-0 small">Actualisé</p>
+                                <p className="text-primary mb-0 small">Total</p>
                             </div>
                         </div>
                     </div>
@@ -352,7 +352,16 @@ const User = () => {
                             <h3 className="h5 mb-0">Overall Information</h3>
                         </div>
                         <div className="card-body p-4">
-                            <h3 className="h6">Cotisation</h3>
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                <h3 className="h6 mb-0">Cotisation</h3>
+                                <div className="text-end">
+                                    <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>Montant disponible</small>
+                                    <span className="fw-bold text-primary fs-5">
+                                        {((cotisationStats?.recent?.reduce((sum, c) => sum + (Number(c.amount) || 0), 0) || 0) -
+                                          (cotisationStats?.withdrawals?.reduce((sum, w) => sum + (Number(w.amount) || 0), 0) || 0)).toLocaleString()} F
+                                    </span>
+                                </div>
+                            </div>
                             <div className="row align-items-center">
                                 <div className="col-sm-6">
                                     <div ref={customerChartRef}></div>
@@ -360,24 +369,28 @@ const User = () => {
                                 <div className="col-sm-6">
                                     <div className="row g-2">
                                         <div className="col-6">
-                                            <div 
-                                                className="text-center p-2 rounded cursor-pointer" 
+                                            <div
+                                                className="text-center p-2 rounded cursor-pointer"
                                                 style={{ backgroundColor: '#5BE49B22', cursor: 'pointer' }}
                                                 onClick={() => setShowModal('cotisation_in')}
                                             >
-                                                <h2 className="mb-1 fs-5">{(cotisationStats?.recent?.length || 0)}</h2>
-                                                <p className="text-success mb-2 small">Entrée</p>
+                                                <h2 className="mb-1 fs-5">
+                                                    {(cotisationStats?.recent?.reduce((sum, c) => sum + (Number(c.amount) || 0), 0) || 0).toLocaleString()} F
+                                                </h2>
+                                                <p className="text-success mb-2 small">Cotisation</p>
                                                 <span className="badge bg-success">Détails</span>
                                             </div>
                                         </div>
                                         <div className="col-6">
-                                            <div 
-                                                className="text-center p-2 rounded cursor-pointer" 
+                                            <div
+                                                className="text-center p-2 rounded cursor-pointer"
                                                 style={{ backgroundColor: '#E6623922', cursor: 'pointer' }}
                                                 onClick={() => setShowModal('cotisation_out')}
                                             >
-                                                <h2 className="mb-1 fs-5">{(cotisationStats?.withdrawals?.length || 0)}</h2>
-                                                <p className="text-warning mb-2 small">Sortie</p>
+                                                <h2 className="mb-1 fs-5">
+                                                    {(cotisationStats?.withdrawals?.reduce((sum, w) => sum + (Number(w.amount) || 0), 0) || 0).toLocaleString()} F
+                                                </h2>
+                                                <p className="text-warning mb-2 small">Retrait</p>
                                                 <span className="badge bg-warning text-dark">Détails</span>
                                             </div>
                                         </div>

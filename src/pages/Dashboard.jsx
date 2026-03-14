@@ -125,7 +125,7 @@ const Dashboard = () => {
                             <div>
                                 <h2 className="mb-3 fs-6">Ventes (Mois)</h2>
                                 <h3 className="fw-bold mb-0">{(summary.monthly_sales || 0).toLocaleString()} F</h3>
-                                <p className="text-success mb-0 small">En temps réel</p>
+                                <p className="text-success mb-0 small">Total</p>
                             </div>
                         </div>
                     </div>
