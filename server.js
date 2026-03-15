@@ -305,8 +305,10 @@ app.post('/api/sync', async (req, res) => {
 // =============================
 // Start server
 // =============================
-app.listen(port, () => {
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Inventory Backend running on port ${port}`);
+    });
+}
 
-    console.log(`Inventory Backend running on port ${port}`);
-
-});
+module.exports = app;
