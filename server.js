@@ -1,5 +1,4 @@
-const express = require('express');
-const { Pool } = require('pg');
+const express = require('express');const { Pool } = require('pg');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -10,12 +9,8 @@ app.use(cors());
 app.use(express.json());
 
 const pool = new Pool({
-    host: process.env.DB_HOST || 'db.hkvujwkxxnivjgjjsdja.supabase.co',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'postgres',
-    port: process.env.DB_PORT || 5432,
-    ssl: { rejectUnauthorized: false }
+     connectionString: process.env.DATABASE_URL || 'postgresql://postgres:Takya@5#Moi@db.hkvujwkxxnivjgjjsdja.supabase.co:5432/postgres',
+   ssl: { rejectUnauthorized: false }
 });
 
 // =============================
@@ -307,6 +302,16 @@ app.post('/api/sync', async (req, res) => {
         res.status(500).json({ error: 'Sync failed' });
     } finally {
         client.release();
+    }
+
+        await connection.commit();
+        res.json({ message: 'Cotisation sync successful' });
+    } catch (err) {
+        await connection.rollback();
+        console.error(err);
+        res.status(500).json({ error: 'Sync failed' });
+    } finally {
+        connection.release();
     }
 });
 
