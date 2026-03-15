@@ -10,10 +10,10 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
+    host: process.env.DB_HOST || 'db.hkvujwkxxnivjgjjsdja.supabase.co',
+    user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'boutique_db',
+    database: process.env.DB_NAME || 'postgres',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0

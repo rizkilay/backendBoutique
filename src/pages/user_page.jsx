@@ -23,7 +23,7 @@ const User = () => {
 
     const fetchStats = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/inventory-stats');
+            const response = await fetch('/api/inventory-stats');
             const data = await response.json();
             setSummary(data);
         } catch (err) {
@@ -33,7 +33,7 @@ const User = () => {
 
     const fetchCotisationStats = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/summary');
+            const response = await fetch('/api/summary');
             const data = await response.json();
             setCotisationStats(data);
         } catch (err) {
@@ -43,7 +43,7 @@ const User = () => {
 
     const fetchOutOfStockList = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/out-of-stock');
+            const response = await fetch('/api/out-of-stock');
             const data = await response.json();
             setOutOfStockList(data);
         } catch (err) {

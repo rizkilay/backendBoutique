@@ -9,7 +9,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/inventory-stats');
+                const response = await fetch('/api/inventory-stats');
                 const data = await response.json();
                 setSummary(data);
             } catch (err) {
