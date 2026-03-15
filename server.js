@@ -10,7 +10,11 @@ app.use(cors());
 app.use(express.json());
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:Takya@5#Moi@db.hkvujwkxxnivjgjjsdja.supabase.co:5432/postgres',
+    host: 'db.hkvujwkxxnivjgjjsdja.supabase.co',
+    port: 5432,
+    database: 'postgres',
+    user: 'postgres',
+    password: process.env.DB_PASSWORD || 'Takya@5#Moi',
     ssl: { rejectUnauthorized: false }
 });
 
@@ -39,7 +43,11 @@ app.get('/api/inventory-stats', async (req, res) => {
             return res.json({ history: [] });
         }
         console.error(err);
-        res.status(500).json({ error: 'Database error' });
+        res.status(500).json({ 
+            error: 'Database error', 
+            details: err.message,
+            code: err.code 
+        });
     }
 });
 
@@ -60,7 +68,11 @@ app.get('/api/out-of-stock', async (req, res) => {
             return res.json([]);
         }
         console.error(err);
-        res.status(500).json({ error: 'Database error' });
+        res.status(500).json({ 
+            error: 'Database error', 
+            details: err.message,
+            code: err.code 
+        });
     }
 });
 
@@ -211,7 +223,9 @@ app.post('/api/sync-inventory', async (req, res) => {
         await client.query('ROLLBACK');
         console.error(err);
         res.status(500).json({
-            error: 'Sync failed'
+            error: 'Sync failed',
+            details: err.message,
+            code: err.code
         });
     } finally {
         client.release();
@@ -237,7 +251,11 @@ app.get('/api/summary', async (req, res) => {
             return res.json({ summary: {}, recent: [], withdrawals: [] });
         }
         console.error(err);
-        res.status(500).json({ error: 'Database error' });
+        res.status(500).json({ 
+            error: 'Database error', 
+            details: err.message,
+            code: err.code 
+        });
     }
 });
 
@@ -300,7 +318,11 @@ app.post('/api/sync', async (req, res) => {
     } catch (err) {
         await client.query('ROLLBACK');
         console.error(err);
-        res.status(500).json({ error: 'Sync failed' });
+        res.status(500).json({ 
+            error: 'Sync failed', 
+            details: err.message,
+            code: err.code 
+        });
     } finally {
         client.release();
     }
