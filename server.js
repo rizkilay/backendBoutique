@@ -10,12 +10,13 @@ app.use(cors());
 app.use(express.json());
 
 const pool = new Pool({
-    host: 'db.hkvujwkxxnivjgjjsdja.supabase.co',
-    port: 5432,
-    database: 'postgres',
-    user: 'postgres',
+    host: process.env.DB_HOST || 'db.hkvujwkxxnivjgjjsdja.supabase.co',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || 'postgres',
+    user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'Takya@5#Moi',
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
+    family: 4  // Force IPv4 to avoid IPv6 issues
 });
 
 // =============================
