@@ -21,10 +21,16 @@ const poolConfig = process.env.DATABASE_URL
         user: process.env.DB_USER || 'postgres',
         password: process.env.DB_PASSWORD || 'Takya@5#Moi',
         ssl: { rejectUnauthorized: false },
-        family: 4  // Force IPv4 to avoid IPv6 issues
+        family: 4  // Force IPv4
     };
 
 const pool = new Pool(poolConfig);
+
+// Log connection attempt (only hostname for security)
+const dbHost = process.env.DATABASE_URL 
+    ? new URL(process.env.DATABASE_URL).hostname 
+    : poolConfig.host;
+console.log(`Attempting to connect to database at: ${dbHost}`);
 
 // =============================
 // GET inventory stats
