@@ -103,9 +103,12 @@ app.post('/api/sync-inventory', async (req, res) => {
                 price DECIMAL(15, 2),
                 quantity INT DEFAULT 0,
                 image VARCHAR(500),
-                brandName VARCHAR(255)
+                brandName VARCHAR(255),
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
+        // Ensure updated_at exists for existing tables
+        await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
         await client.query(`
             CREATE TABLE IF NOT EXISTS sales (
                 id SERIAL PRIMARY KEY,
@@ -153,11 +156,12 @@ app.post('/api/sync-inventory', async (req, res) => {
         if (Array.isArray(all_products)) {
             for (const p of all_products) {
                 await client.query(`
-                    INSERT INTO products (id, name, category, price, quantity, image, brandName)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    INSERT INTO products (id, name, category, price, quantity, image, brandName, updated_at)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
                     ON CONFLICT (id) DO UPDATE SET
                         name = EXCLUDED.name, category = EXCLUDED.category, price = EXCLUDED.price,
-                        quantity = EXCLUDED.quantity, image = EXCLUDED.image, brandName = EXCLUDED.brandName
+                        quantity = EXCLUDED.quantity, image = EXCLUDED.image, brandName = EXCLUDED.brandName,
+                        updated_at = CURRENT_TIMESTAMP
                 `, [p.id, p.name, p.category, p.price, p.quantity || 0, p.image || '', p.brandName || '']);
             }
         }
@@ -178,8 +182,23 @@ app.post('/api/sync-inventory', async (req, res) => {
 // =============================
 app.get('/api/products', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM products WHERE quantity > 0');
-        res.json(result.rows);
+        const { since } = req.query;
+        let query = 'SELECT * FROM products';
+        let params = [];
+        
+        if (since && since !== 'null' && since !== 'undefined') {
+            query += ' WHERE updated_at > $1';
+            params.push(since);
+        } else {
+            // Only return available products for initial sync or when no date is provided
+            query += ' WHERE quantity > 0';
+        }
+        
+        const result = await pool.query(query, params);
+        res.json({
+            products: result.rows,
+            server_time: new Date().toISOString()
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Database error' });
@@ -204,7 +223,7 @@ app.post('/api/sales', async (req, res) => {
             return res.json({ message: 'Sale already recorded (duplicate ignored)', sale_id: existingResult.rows[0].id });
         }
         const result = await client.query(`INSERT INTO sales (product_id, transaction_id, quantity, amount) VALUES ($1, $2, $3, $4) RETURNING id`, [product_id, transaction_id, quantity, amount]);
-        await client.query(`UPDATE products SET quantity = quantity - $1 WHERE id = $2`, [quantity, product_id]);
+        await client.query(`UPDATE products SET quantity = quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`, [quantity, product_id]);
         await client.query('COMMIT');
         res.json({ message: 'Sale recorded successfully', sale_id: result.rows[0].id });
     } catch (err) {
