@@ -264,6 +264,147 @@ app.post('/api/sync', async (req, res) => {
     }
 });
 
+// =============================
+// MOBILE SYNC RELAY (User UI)
+// =============================
+
+// POST sync exits from mobile
+app.post('/api/sync-exits', async (req, res) => {
+    const exits = req.body;
+    if (!Array.isArray(exits)) return res.status(400).json({ error: 'Expected array of exits' });
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS mobile_exits (
+                uuid VARCHAR(255) PRIMARY KEY,
+                product_id INT,
+                name VARCHAR(255),
+                quantity INT,
+                amount DECIMAL(15, 2),
+                client_id INT,
+                created_at TIMESTAMP,
+                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        for (const e of exits) {
+            await client.query(`
+                INSERT INTO mobile_exits (uuid, product_id, name, quantity, amount, client_id, created_at)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                ON CONFLICT (uuid) DO NOTHING
+            `, [e.uuid, e.product_id, e.name, e.quantity, e.amount, e.client_id, e.created_at]);
+        }
+        await client.query('COMMIT');
+        res.json({ message: 'Exits synced successfully' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(err);
+        res.status(500).json({ error: 'Sync exits failed' });
+    } finally {
+        client.release();
+    }
+});
+
+// POST sync expenses from mobile
+app.post('/api/sync-expenses', async (req, res) => {
+    const expenses = req.body;
+    if (!Array.isArray(expenses)) return res.status(400).json({ error: 'Expected array of expenses' });
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS mobile_expenses (
+                uuid VARCHAR(255) PRIMARY KEY,
+                reason VARCHAR(255),
+                amount DECIMAL(15, 2),
+                category VARCHAR(255),
+                datetime TIMESTAMP,
+                description TEXT,
+                source VARCHAR(255),
+                financeur_id VARCHAR(255),
+                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        for (const e of expenses) {
+            await client.query(`
+                INSERT INTO mobile_expenses (uuid, reason, amount, category, datetime, description, source, financeur_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                ON CONFLICT (uuid) DO NOTHING
+            `, [e.uuid, e.reason, e.amount, e.category, e.datetime, e.description, e.source, e.financeur_id]);
+        }
+        await client.query('COMMIT');
+        res.json({ message: 'Expenses synced successfully' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(err);
+        res.status(500).json({ error: 'Sync expenses failed' });
+    } finally {
+        client.release();
+    }
+});
+
+// POST sync cotisations from mobile
+app.post('/api/sync-cotisations', async (req, res) => {
+    const cotisations = req.body;
+    if (!Array.isArray(cotisations)) return res.status(400).json({ error: 'Expected array of cotisations' });
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS mobile_cotisations (
+                uuid VARCHAR(255) PRIMARY KEY,
+                amount DECIMAL(15, 2),
+                date VARCHAR(255),
+                note TEXT,
+                source VARCHAR(255),
+                category VARCHAR(255),
+                partner_id INT,
+                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        for (const c of cotisations) {
+            await client.query(`
+                INSERT INTO mobile_cotisations (uuid, amount, date, note, source, category, partner_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                ON CONFLICT (uuid) DO NOTHING
+            `, [c.uuid, c.amount, c.date, c.note, c.source, c.category, c.partner_id]);
+        }
+        await client.query('COMMIT');
+        res.json({ message: 'Cotisations synced successfully' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(err);
+        res.status(500).json({ error: 'Sync cotisations failed' });
+    } finally {
+        client.release();
+    }
+});
+
+// GET all mobile data for Manager App
+app.get('/api/get-mobile-data', async (req, res) => {
+    try {
+        const exits = await pool.query('SELECT * FROM mobile_exits');
+        const expenses = await pool.query('SELECT * FROM mobile_expenses');
+        const cotisations = await pool.query('SELECT * FROM mobile_cotisations');
+
+        res.json({
+            exits: exits.rows,
+            expenses: expenses.rows,
+            cotisations: cotisations.rows
+        });
+    } catch (err) {
+        if (err.code === '42P01') {
+            // If tables don't exist yet, return empty
+            return res.json({ exits: [], expenses: [], cotisations: [] });
+        }
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 if (process.env.NODE_ENV !== 'production') {
     app.listen(port, () => {
         console.log(`Inventory Backend running on port ${port}`);
