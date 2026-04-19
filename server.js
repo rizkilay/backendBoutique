@@ -104,11 +104,15 @@ app.post('/api/sync-inventory', async (req, res) => {
                 quantity INT DEFAULT 0,
                 image VARCHAR(500),
                 brandName VARCHAR(255),
+                description TEXT,
+                tags TEXT,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
-        // Ensure updated_at exists for existing tables
+        // Ensure added columns exist for older tables
         await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+        await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS description TEXT');
+        await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS tags TEXT');
         await client.query(`
             CREATE TABLE IF NOT EXISTS sales (
                 id SERIAL PRIMARY KEY,
@@ -155,14 +159,17 @@ app.post('/api/sync-inventory', async (req, res) => {
         // Update products catalog
         if (Array.isArray(all_products)) {
             for (const p of all_products) {
+                // p.image_path est envoyé par boutique-app, ou p.image (fallback)
+                const img = p.image_path || p.image || '';
                 await client.query(`
-                    INSERT INTO products (id, name, category, price, quantity, image, brandName, updated_at)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
+                    INSERT INTO products (id, name, category, price, quantity, image, brandName, description, tags, updated_at)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP)
                     ON CONFLICT (id) DO UPDATE SET
                         name = EXCLUDED.name, category = EXCLUDED.category, price = EXCLUDED.price,
                         quantity = EXCLUDED.quantity, image = EXCLUDED.image, brandName = EXCLUDED.brandName,
+                        description = EXCLUDED.description, tags = EXCLUDED.tags,
                         updated_at = CURRENT_TIMESTAMP
-                `, [p.id, p.name, p.category, p.price, p.quantity || 0, p.image || '', p.brandName || '']);
+                `, [p.id, p.name, p.category, p.price, p.quantity || 0, img, p.brandName || '', p.description || '', p.tags || '']);
             }
         }
 
