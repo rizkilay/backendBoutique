@@ -5,14 +5,25 @@ import { useAuth } from '../context/AuthContext';
 const SignIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // In a real app, you would validate credentials here
-        login();
-        navigate('/dashboard');
+        setError('');
+        setLoading(true);
+
+        try {
+            await login(email, password);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.message || 'Identifiants incorrects. Veuillez réessayer.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -26,55 +37,82 @@ const SignIn = () => {
                                 <img src="/assets/images/logo.svg" alt="" />
                             </span>
                         </Link>
-                        <h1 className="card-title mb-5 h5">Sign in to your account</h1>
+                        <h1 className="card-title mb-1 h5">Connexion au Back-Office</h1>
+                        <p className="text-muted small mb-4">Entrez vos identifiants pour accéder au tableau de bord</p>
                     </div>
+
+                    {error && (
+                        <div className="alert alert-danger d-flex align-items-center gap-2 py-2 mb-3" role="alert">
+                            <i className="ti ti-alert-circle fs-5 text-danger"></i>
+                            <span className="small">{error}</span>
+                        </div>
+                    )}
 
                     <form className="needs-validation mt-3" noValidate onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Email address</label>
+                            <label htmlFor="email" className="form-label">Adresse email</label>
                             <input
                                 id="email"
                                 type="email"
                                 className="form-control"
-                                placeholder="name@example.com"
+                                placeholder="exemple@boutique.com"
                                 required
                                 autoFocus
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                disabled={loading}
                             />
-                            <div className="invalid-feedback">Please enter a valid email.</div>
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="password" d-flex justify-content-between className="form-label d-flex justify-content-between">
-                                <span>Password</span>
-                                <Link to="#" className="small link-primary">Forgot Password?</Link>
+                            <label htmlFor="password" className="form-label d-flex justify-content-between">
+                                <span>Mot de passe</span>
                             </label>
-                            <input
-                                id="password"
-                                type="password"
-                                className="form-control"
-                                placeholder="Password"
-                                required
-                                minLength="6"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <div className="invalid-feedback">Please provide a password (min 6 characters).</div>
-                        </div>
-
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-                            <div className="form-check">
-                                <input id="remember" className="form-check-input" type="checkbox" />
-                                <label className="form-check-label small" htmlFor="remember">Remember me</label>
+                            <div className="input-group">
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    className="form-control border-end-0"
+                                    placeholder="Votre mot de passe"
+                                    required
+                                    minLength="6"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    disabled={loading}
+                                />
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary border-start-0"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    tabIndex={-1}
+                                >
+                                    <i className={`ti ${showPassword ? 'ti-eye-off' : 'ti-eye'}`}></i>
+                                </button>
                             </div>
                         </div>
 
-                        <button className="btn btn-primary w-100" type="submit">Sign in</button>
+                        <button
+                            className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span>Connexion en cours...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <i className="ti ti-login fs-5"></i>
+                                    <span>Se connecter</span>
+                                </>
+                            )}
+                        </button>
                     </form>
 
-                    <div className="text-center mt-3 small text-muted">
-                        Don't have an account? <Link to="/signup" className="link-primary">Sign up</Link>
+                    <div className="text-center mt-4 p-3 bg-light rounded small text-muted">
+                        <strong>Compte par défaut :</strong><br />
+                        <span className="text-primary">admin@boutique.com</span> / <span className="text-primary">Admin@1234</span>
                     </div>
                 </div>
             </div>

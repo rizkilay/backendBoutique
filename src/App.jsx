@@ -11,7 +11,22 @@ import VendorsPage from './pages/VendorsPage';
 import Layout from './layouts/Layout';
 
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, loading } = useAuth();
+
+    // Pendant la vérification du token, afficher un loader
+    if (loading) {
+        return (
+            <div className="d-flex align-items-center justify-content-center min-vh-100">
+                <div className="text-center">
+                    <div className="spinner-border text-primary mb-3" role="status">
+                        <span className="visually-hidden">Chargement...</span>
+                    </div>
+                    <p className="text-muted small">Vérification de la session...</p>
+                </div>
+            </div>
+        );
+    }
+
     return isAuthenticated ? children : <Navigate to="/signin" />;
 };
 

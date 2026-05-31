@@ -1,10 +1,13 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3001;
+const JWT_SECRET = process.env.JWT_SECRET || 'boutique_secret_key_2024_very_long_and_secure';
 
 app.use(cors());
 app.use(express.json());
@@ -12,7 +15,9 @@ app.use(express.json());
 const poolConfig = process.env.DATABASE_URL 
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false }
+        ssl: { rejectUnauthorized: false },
+        // pgbouncer en mode transaction ne supporte pas les prepared statements
+        max: 10,
     }
     : {
         host: process.env.DB_HOST || 'db.hkvujwkxxnivjgjjsdja.supabase.co',
@@ -21,16 +26,334 @@ const poolConfig = process.env.DATABASE_URL
         user: process.env.DB_USER || 'postgres',
         password: process.env.DB_PASSWORD || 'Takya@5#Moi',
         ssl: { rejectUnauthorized: false },
-        family: 4  // Force IPv4
+        family: 4
     };
 
 const pool = new Pool(poolConfig);
 
-// Log connection attempt
 const dbHost = process.env.DATABASE_URL 
     ? new URL(process.env.DATABASE_URL).hostname 
     : poolConfig.host;
 console.log(`Attempting to connect to database at: ${dbHost}`);
+
+// =============================
+// INITIALISATION DES TABLES
+// =============================
+async function initDatabase() {
+    const client = await pool.connect();
+    try {
+        // Table admin_users
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS admin_users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                role VARCHAR(50) DEFAULT 'Éditeur',
+                status VARCHAR(50) DEFAULT 'Actif',
+                last_login TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Table boutiques
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS boutiques (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                city VARCHAR(255),
+                neighborhood VARCHAR(255),
+                phone VARCHAR(50),
+                manager VARCHAR(255),
+                status VARCHAR(50) DEFAULT 'Actif',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Créer admin par défaut si n'existe pas
+        const existing = await client.query(`SELECT id FROM admin_users WHERE email = $1`, ['admin@boutique.com']);
+        if (existing.rows.length === 0) {
+            const hash = await bcrypt.hash('Admin@1234', 10);
+            await client.query(`
+                INSERT INTO admin_users (name, email, password_hash, role, status)
+                VALUES ($1, $2, $3, $4, $5)
+            `, ['Administrateur', 'admin@boutique.com', hash, 'Administrateur', 'Actif']);
+            console.log('✅ Admin par défaut créé: admin@boutique.com / Admin@1234');
+        }
+
+        console.log('✅ Tables initialisées avec succès');
+    } catch (err) {
+        console.error('❌ Erreur initialisation DB:', err.message);
+    } finally {
+        client.release();
+    }
+}
+
+initDatabase();
+
+// =============================
+// MIDDLEWARE AUTH JWT
+// =============================
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'Token manquant' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Token invalide ou expiré' });
+        req.user = user;
+        next();
+    });
+}
+
+// =============================
+// AUTH — LOGIN
+// =============================
+app.post('/api/auth/login', async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email et mot de passe requis' });
+    }
+
+    try {
+        const result = await pool.query(
+            `SELECT * FROM admin_users WHERE email = $1 AND status = 'Actif'`,
+            [email]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+        }
+
+        const user = result.rows[0];
+        const valid = await bcrypt.compare(password, user.password_hash);
+
+        if (!valid) {
+            return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+        }
+
+        // Mettre à jour last_login
+        await pool.query(`UPDATE admin_users SET last_login = CURRENT_TIMESTAMP WHERE id = $1`, [user.id]);
+
+        const token = jwt.sign(
+            { id: user.id, email: user.email, name: user.name, role: user.role },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur', details: err.message });
+    }
+});
+
+// =============================
+// AUTH — ME
+// =============================
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, name, email, role, status, last_login, created_at FROM admin_users WHERE id = $1`,
+            [req.user.id]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// =============================
+// MEMBRES — CRUD
+// =============================
+
+// GET tous les membres
+app.get('/api/members', authenticateToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, name, email, role, status, last_login, created_at FROM admin_users ORDER BY created_at DESC`
+        );
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// POST créer un membre
+app.post('/api/members', authenticateToken, async (req, res) => {
+    const { name, email, password, role } = req.body;
+    if (!name || !email || !password) {
+        return res.status(400).json({ error: 'Nom, email et mot de passe requis' });
+    }
+
+    try {
+        const existing = await pool.query(`SELECT id FROM admin_users WHERE email = $1`, [email]);
+        if (existing.rows.length > 0) {
+            return res.status(409).json({ error: 'Un membre avec cet email existe déjà' });
+        }
+
+        const hash = await bcrypt.hash(password, 10);
+        const result = await pool.query(`
+            INSERT INTO admin_users (name, email, password_hash, role, status)
+            VALUES ($1, $2, $3, $4, 'Actif')
+            RETURNING id, name, email, role, status, created_at
+        `, [name, email, hash, role || 'Éditeur']);
+
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur', details: err.message });
+    }
+});
+
+// PUT modifier un membre
+app.put('/api/members/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { name, email, role, status, password } = req.body;
+
+    try {
+        // Vérifier que l'email n'est pas pris par un autre
+        if (email) {
+            const existing = await pool.query(
+                `SELECT id FROM admin_users WHERE email = $1 AND id != $2`,
+                [email, id]
+            );
+            if (existing.rows.length > 0) {
+                return res.status(409).json({ error: 'Cet email est déjà utilisé par un autre membre' });
+            }
+        }
+
+        let query, params;
+        if (password && password.trim() !== '') {
+            const hash = await bcrypt.hash(password, 10);
+            query = `
+                UPDATE admin_users SET name=$1, email=$2, role=$3, status=$4, password_hash=$5
+                WHERE id=$6
+                RETURNING id, name, email, role, status, last_login, created_at
+            `;
+            params = [name, email, role, status, hash, id];
+        } else {
+            query = `
+                UPDATE admin_users SET name=$1, email=$2, role=$3, status=$4
+                WHERE id=$5
+                RETURNING id, name, email, role, status, last_login, created_at
+            `;
+            params = [name, email, role, status, id];
+        }
+
+        const result = await pool.query(query, params);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Membre non trouvé' });
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur', details: err.message });
+    }
+});
+
+// DELETE supprimer un membre
+app.delete('/api/members/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+
+    // Empêcher de supprimer son propre compte
+    if (parseInt(id) === req.user.id) {
+        return res.status(403).json({ error: 'Vous ne pouvez pas supprimer votre propre compte' });
+    }
+
+    try {
+        const result = await pool.query(
+            `DELETE FROM admin_users WHERE id = $1 RETURNING id, name`,
+            [id]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Membre non trouvé' });
+        res.json({ message: `Membre "${result.rows[0].name}" supprimé avec succès` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// =============================
+// BOUTIQUES — CRUD
+// =============================
+
+// GET toutes les boutiques
+app.get('/api/stores', authenticateToken, async (req, res) => {
+    try {
+        const result = await pool.query(`SELECT * FROM boutiques ORDER BY created_at DESC`);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// POST créer une boutique
+app.post('/api/stores', authenticateToken, async (req, res) => {
+    const { name, city, neighborhood, phone, manager } = req.body;
+    if (!name) {
+        return res.status(400).json({ error: 'Le nom de la boutique est requis' });
+    }
+
+    try {
+        const result = await pool.query(`
+            INSERT INTO boutiques (name, city, neighborhood, phone, manager, status)
+            VALUES ($1, $2, $3, $4, $5, 'Actif')
+            RETURNING *
+        `, [name, city || '', neighborhood || '', phone || '', manager || '']);
+
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur', details: err.message });
+    }
+});
+
+// PUT modifier une boutique
+app.put('/api/stores/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { name, city, neighborhood, phone, manager, status } = req.body;
+
+    try {
+        const result = await pool.query(`
+            UPDATE boutiques SET name=$1, city=$2, neighborhood=$3, phone=$4, manager=$5, status=$6
+            WHERE id=$7
+            RETURNING *
+        `, [name, city || '', neighborhood || '', phone || '', manager || '', status || 'Actif', id]);
+
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Boutique non trouvée' });
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur', details: err.message });
+    }
+});
+
+// DELETE supprimer une boutique
+app.delete('/api/stores/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await pool.query(
+            `DELETE FROM boutiques WHERE id = $1 RETURNING id, name`,
+            [id]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Boutique non trouvée' });
+        res.json({ message: `Boutique "${result.rows[0].name}" supprimée avec succès` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
 
 // =============================
 // GET inventory stats
@@ -109,7 +432,6 @@ app.post('/api/sync-inventory', async (req, res) => {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
-        // Ensure added columns exist for older tables
         await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
         await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS description TEXT');
         await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS tags TEXT');
@@ -125,7 +447,6 @@ app.post('/api/sync-inventory', async (req, res) => {
             )
         `);
 
-        // Update main stats
         await client.query(`
             INSERT INTO inventory_stats (id, today_sales, monthly_sales, total_expenses, estimated_profit, available_funds, out_of_stock_count, total_sales, total_purchases)
             VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8)
@@ -136,7 +457,6 @@ app.post('/api/sync-inventory', async (req, res) => {
                 total_sales = EXCLUDED.total_sales, total_purchases = EXCLUDED.total_purchases
         `, [today_sales, monthly_sales, total_expenses, estimated_profit, available_funds, out_of_stock_count, total_sales, total_purchases]);
 
-        // Update daily stats
         if (Array.isArray(sales_history)) {
             for (const s of sales_history) {
                 const purchase = purchase_history ? purchase_history.find(p => p.date === s.date) : null;
@@ -148,7 +468,6 @@ app.post('/api/sync-inventory', async (req, res) => {
             }
         }
 
-        // Update out of stock
         await client.query('DELETE FROM out_of_stock_products');
         if (Array.isArray(out_of_stock_list)) {
             for (const p of out_of_stock_list) {
@@ -156,10 +475,8 @@ app.post('/api/sync-inventory', async (req, res) => {
             }
         }
 
-        // Update products catalog
         if (Array.isArray(all_products)) {
             for (const p of all_products) {
-                // p.image_path est envoyé par boutique-app, ou p.image (fallback)
                 const img = p.image_path || p.image || '';
                 await client.query(`
                     INSERT INTO products (id, name, category, price, quantity, image, brandName, description, tags, updated_at)
@@ -197,7 +514,6 @@ app.get('/api/products', async (req, res) => {
             query += ' WHERE updated_at > $1';
             params.push(since);
         } else {
-            // Only return available products for initial sync or when no date is provided
             query += ' WHERE quantity > 0';
         }
         
@@ -291,10 +607,9 @@ app.post('/api/sync', async (req, res) => {
 });
 
 // =============================
-// MOBILE SYNC RELAY (User UI)
+// MOBILE SYNC RELAY
 // =============================
 
-// POST sync exits from mobile
 app.post('/api/sync-exits', async (req, res) => {
     const exits = req.body;
     if (!Array.isArray(exits)) return res.status(400).json({ error: 'Expected array of exits' });
@@ -332,7 +647,6 @@ app.post('/api/sync-exits', async (req, res) => {
     }
 });
 
-// POST sync expenses from mobile
 app.post('/api/sync-expenses', async (req, res) => {
     const expenses = req.body;
     if (!Array.isArray(expenses)) return res.status(400).json({ error: 'Expected array of expenses' });
@@ -371,7 +685,6 @@ app.post('/api/sync-expenses', async (req, res) => {
     }
 });
 
-// POST sync cotisations from mobile
 app.post('/api/sync-cotisations', async (req, res) => {
     const cotisations = req.body;
     if (!Array.isArray(cotisations)) return res.status(400).json({ error: 'Expected array of cotisations' });
@@ -409,7 +722,6 @@ app.post('/api/sync-cotisations', async (req, res) => {
     }
 });
 
-// GET all mobile data for Manager App
 app.get('/api/get-mobile-data', async (req, res) => {
     try {
         const exits = await pool.query('SELECT * FROM mobile_exits');
@@ -423,7 +735,6 @@ app.get('/api/get-mobile-data', async (req, res) => {
         });
     } catch (err) {
         if (err.code === '42P01') {
-            // If tables don't exist yet, return empty
             return res.json({ exits: [], expenses: [], cotisations: [] });
         }
         console.error(err);
