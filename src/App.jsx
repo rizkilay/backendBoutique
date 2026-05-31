@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import UserPage from './pages/UserPage';
 import User from './pages/user_page';
 import MembersPage from './pages/MembersPage';
+import StoresPage from './pages/StoresPage';
+import VendorsPage from './pages/VendorsPage';
 import Layout from './layouts/Layout';
 
 const ProtectedRoute = ({ children }) => {
@@ -26,6 +28,26 @@ const App = () => {
                             <ProtectedRoute>
                                 <Layout>
                                     <Dashboard />
+                                </Layout>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/stores"
+                        element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <StoresPage />
+                                </Layout>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendors"
+                        element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <VendorsPage />
                                 </Layout>
                             </ProtectedRoute>
                         }
