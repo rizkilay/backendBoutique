@@ -103,7 +103,7 @@ const StoresPage = () => {
                                 <tr>
                                     <th className="px-4 py-3 border-0">Information complète</th>
                                     <th className="py-3 border-0">Gérant</th>
-                                    <th className="py-3 border-0">Nbr de vendeurs</th>
+                                    <th className="py-3 border-0 text-center">Nbr de vendeurs</th>
                                     <th className="py-3 border-0">Statut</th>
                                     <th className="px-4 py-3 border-0 text-end">Actions</th>
                                 </tr>
@@ -113,7 +113,7 @@ const StoresPage = () => {
                                     filteredStores.map((store) => (
                                         <tr key={store.id}>
                                             <td className="px-4">
-                                                <div className="d-flex align-items-center gap-3">
+                                                <div className="d-flex  gap-3">
                                                     <div className="avatar avatar-sm rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold">
                                                         {store.name.charAt(0)}
                                                     </div>
@@ -128,7 +128,7 @@ const StoresPage = () => {
                                                 </div>
                                             </td>
                                             <td className="py-3">{store.manager}</td>
-                                            <td className="py-3">3</td>
+                                            <td className="py-3 text-center">3</td>
                                             <td className="py-3">
                                                 <span className={`badge ${store.status === 'Actif' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'}`}>
                                                     {store.status}

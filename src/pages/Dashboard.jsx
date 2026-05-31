@@ -26,8 +26,8 @@ const Dashboard = () => {
         if (salesPurchaseRef.current) {
             const options = {
                 series: [
-                    { name: 'Sales', data: [44, 55, 57, 56, 61, 58, 63, 60, 66] },
-                    { name: 'Purchase', data: [76, 85, 101, 98, 87, 105, 91, 114, 94] },
+                    { name: 'Base', data: [44, 55, 57, 56, 61, 58, 63, 60, 66] },
+                    { name: 'Téléphone', data: [76, 85, 101, 98, 87, 105, 91, 114, 94] },
                 ],
                 colors: ['#f7a085', '#E66239'],
                 chart: {
@@ -109,9 +109,9 @@ const Dashboard = () => {
                                 <i className="ti ti-report-analytics fs-4"></i>
                             </div>
                             <div>
-                                <h2 className="mb-3 fs-6">Ventes (Aujourd'hui)</h2>
-                                <h3 className="fw-bold mb-0">{(summary.today_sales || 0).toLocaleString()} F</h3>
-                                <p className="text-primary mb-0 small">Actualisé</p>
+                                <h2 className="mb-3 fs-6">Boutiques</h2>
+                                <h3 className="fw-bold mb-0">{(summary.total_stores || 0).toLocaleString()}</h3>
+                                <p className="text-primary mb-0 small">Boutiques actives</p>
                             </div>
                         </div>
                     </div>
@@ -123,9 +123,9 @@ const Dashboard = () => {
                                 <i className="ti ti-repeat fs-4"></i>
                             </div>
                             <div>
-                                <h2 className="mb-3 fs-6">Ventes (Mois)</h2>
-                                <h3 className="fw-bold mb-0">{(summary.monthly_sales || 0).toLocaleString()} F</h3>
-                                <p className="text-success mb-0 small">Total</p>
+                                <h2 className="mb-3 fs-6">Vendeurs</h2>
+                                <h3 className="fw-bold mb-0">{(summary.total_sellers || 0).toLocaleString()}</h3>
+                                <p className="text-success mb-0 small">Vendeurs actifs</p>
                             </div>
                         </div>
                     </div>
@@ -137,9 +137,9 @@ const Dashboard = () => {
                                 <i className="ti ti-currency-dollar fs-4"></i>
                             </div>
                             <div>
-                                <h2 className="mb-3 fs-6">Dépenses Totales</h2>
+                                <h2 className="mb-3 fs-6">Membres</h2>
                                 <h3 className="fw-bold mb-0">{(summary.total_expenses || 0).toLocaleString()} F</h3>
-                                <p className="text-info mb-0 small">Mois en cours</p>
+                                <p className="text-info mb-0 small">Personnes</p>
                             </div>
                         </div>
                     </div>
@@ -151,7 +151,7 @@ const Dashboard = () => {
                                 <i className="ti ti-notes fs-4"></i>
                             </div>
                             <div>
-                                <h2 className="mb-3 fs-6">Fonds Disponibles</h2>
+                                <h2 className="mb-3 fs-6">Comptes supprimés</h2>
                                 <h3 className="fw-bold mb-0">{(summary.available_funds || 0).toLocaleString()} F</h3>
                                 <p className="text-warning mb-0 small">Caisse disponible</p>
                             </div>
@@ -165,7 +165,7 @@ const Dashboard = () => {
                 <div className="col-12 col-lg-6">
                     <div className="card">
                         <div className="card-header d-flex justify-content-between align-items-center bg-transparent px-4 py-3">
-                            <h3 className="h5 mb-0">Sales vs Purchase</h3>
+                            <h3 className="h5 mb-0">Transactions</h3>
                             <div>
                                 <select className="form-select form-select-sm">
                                     <option defaultValue>This Year</option>
@@ -181,59 +181,6 @@ const Dashboard = () => {
                 </div>
 
                 <div className="col-12 col-lg-6">
-                    <div className="card">
-                        <div className="card-header d-flex justify-content-between align-items-center bg-transparent px-4 py-3">
-                            <h3 className="h5 mb-0">Overall Information</h3>
-                            <div>
-                                <select className="form-select form-select-sm">
-                                    <option defaultValue>Last 6 Months</option>
-                                    <option>This Month</option>
-                                    <option>This Week</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="card-body p-4">
-                            <h3 className="h6">Cotissation</h3>
-                            <div className="row align-items-center">
-                                <div className="col-sm-6">
-                                    <div ref={customerChartRef}></div>
-                                </div>
-                                <div className="col-sm-6">
-                                    <div className="row">
-                                        <div className="col-6 border-end">
-                                            <div className="text-center">
-                                                <h2 className="mb-1">5.5K</h2>
-                                                <p className="text-success mb-2">First Time</p>
-                                                <span className="badge bg-success"><i className="ti ti-arrow-up-left me-1"></i>25%</span>
-                                            </div>
-                                        </div>
-                                        <div className="col-6">
-                                            <div className="text-center">
-                                                <h2 className="mb-1">3.5K</h2>
-                                                <p className="text-warning mb-2">Return</p>
-                                                <span className="badge bg-success badge-xs d-inline-flex align-items-center"><i className="ti ti-arrow-up-left me-1"></i>21%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Additional Stats */}
-                            <div className="row text-center border-top mt-4 pt-4">
-                                <div className="col-4 border-end">
-                                    <h3 className="fw-bold mb-2">{(summary.estimated_profit || 0).toLocaleString()} F</h3>
-                                    <small className="text-secondary">Ventes totales</small>
-                                </div>
-                                <div className="col-4 border-end">
-                                    <h3 className="fw-bold mb-2">{summary.out_of_stock_count || 0}</h3>
-                                    <small className="text-secondary">Profit Estimé</small>
-                                </div>
-                                <div className="col-4">
-                                    <h3 className="fw-bold mb-2">{(summary.today_sales || 0).toLocaleString()} F</h3>
-                                    <small className="text-danger">Ruptures Stock</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
