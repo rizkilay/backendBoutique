@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE = 'https://backend-boutique.vercel.app/3001';
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
