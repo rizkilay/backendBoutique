@@ -738,20 +738,20 @@ app.post('/api/sync-exits', async (req, res) => {
         await client.query('BEGIN');
         await client.query(`
             CREATE TABLE IF NOT EXISTS mobile_exits (
-                uuid VARCHAR(255) PRIMARY KEY,
+                uuid VARCHAR(255),
                 product_id INT,
                 name VARCHAR(255),
                 quantity INT,
                 amount DECIMAL(15, 2),
                 client_id INT,
                 created_at TIMESTAMP,
-                boutique_code VARCHAR(255),
-                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                boutique_code VARCHAR(255) NOT NULL DEFAULT 'UNKNOWN',
+                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (uuid, boutique_code)
             )
         `);
-        await client.query('ALTER TABLE mobile_exits ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255)');
+        await client.query('ALTER TABLE mobile_exits ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255) NOT NULL DEFAULT \'UNKNOWN\'');
         
-        // Drop single PK on uuid if we want different boutiques to support same UUID
         try { await client.query('ALTER TABLE mobile_exits DROP CONSTRAINT IF EXISTS mobile_exits_pkey'); } catch (e) {}
         try { await client.query('ALTER TABLE mobile_exits ADD PRIMARY KEY (uuid, boutique_code)'); } catch (e) {}
 
@@ -784,7 +784,7 @@ app.post('/api/sync-expenses', async (req, res) => {
         await client.query('BEGIN');
         await client.query(`
             CREATE TABLE IF NOT EXISTS mobile_expenses (
-                uuid VARCHAR(255) PRIMARY KEY,
+                uuid VARCHAR(255),
                 reason VARCHAR(255),
                 amount DECIMAL(15, 2),
                 category VARCHAR(255),
@@ -792,11 +792,12 @@ app.post('/api/sync-expenses', async (req, res) => {
                 description TEXT,
                 source VARCHAR(255),
                 financeur_id VARCHAR(255),
-                boutique_code VARCHAR(255),
-                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                boutique_code VARCHAR(255) NOT NULL DEFAULT 'UNKNOWN',
+                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (uuid, boutique_code)
             )
         `);
-        await client.query('ALTER TABLE mobile_expenses ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255)');
+        await client.query('ALTER TABLE mobile_expenses ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255) NOT NULL DEFAULT \'UNKNOWN\'');
         
         try { await client.query('ALTER TABLE mobile_expenses DROP CONSTRAINT IF EXISTS mobile_expenses_pkey'); } catch (e) {}
         try { await client.query('ALTER TABLE mobile_expenses ADD PRIMARY KEY (uuid, boutique_code)'); } catch (e) {}
@@ -830,18 +831,19 @@ app.post('/api/sync-cotisations', async (req, res) => {
         await client.query('BEGIN');
         await client.query(`
             CREATE TABLE IF NOT EXISTS mobile_cotisations (
-                uuid VARCHAR(255) PRIMARY KEY,
+                uuid VARCHAR(255),
                 amount DECIMAL(15, 2),
                 date VARCHAR(255),
                 note TEXT,
                 source VARCHAR(255),
                 category VARCHAR(255),
                 partner_id INT,
-                boutique_code VARCHAR(255),
-                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                boutique_code VARCHAR(255) NOT NULL DEFAULT 'UNKNOWN',
+                pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (uuid, boutique_code)
             )
         `);
-        await client.query('ALTER TABLE mobile_cotisations ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255)');
+        await client.query('ALTER TABLE mobile_cotisations ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255) NOT NULL DEFAULT \'UNKNOWN\'');
         
         try { await client.query('ALTER TABLE mobile_cotisations DROP CONSTRAINT IF EXISTS mobile_cotisations_pkey'); } catch (e) {}
         try { await client.query('ALTER TABLE mobile_cotisations ADD PRIMARY KEY (uuid, boutique_code)'); } catch (e) {}
