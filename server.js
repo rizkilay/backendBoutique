@@ -745,22 +745,37 @@ app.post('/api/sync-exits', async (req, res) => {
                 amount DECIMAL(15, 2),
                 client_id INT,
                 created_at TIMESTAMP,
+                is_loss INT DEFAULT 0,
+                is_paid INT DEFAULT 1,
                 boutique_code VARCHAR(255) NOT NULL DEFAULT 'UNKNOWN',
                 pushed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (uuid, boutique_code)
             )
         `);
         await client.query('ALTER TABLE mobile_exits ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255) NOT NULL DEFAULT \'UNKNOWN\'');
+        await client.query('ALTER TABLE mobile_exits ADD COLUMN IF NOT EXISTS is_loss INT DEFAULT 0');
+        await client.query('ALTER TABLE mobile_exits ADD COLUMN IF NOT EXISTS is_paid INT DEFAULT 1');
         
         try { await client.query('ALTER TABLE mobile_exits DROP CONSTRAINT IF EXISTS mobile_exits_pkey'); } catch (e) {}
         try { await client.query('ALTER TABLE mobile_exits ADD PRIMARY KEY (uuid, boutique_code)'); } catch (e) {}
 
         for (const e of exits) {
             await client.query(`
-                INSERT INTO mobile_exits (uuid, product_id, name, quantity, amount, client_id, created_at, boutique_code)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                INSERT INTO mobile_exits (uuid, product_id, name, quantity, amount, client_id, created_at, boutique_code, is_loss, is_paid)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                 ON CONFLICT (uuid, boutique_code) DO NOTHING
-            `, [e.uuid, e.product_id, e.name, e.quantity, e.amount, e.client_id, e.created_at, boutique_code]);
+            `, [
+                e.uuid, 
+                e.product_id, 
+                e.name, 
+                e.quantity, 
+                e.amount, 
+                e.client_id, 
+                e.created_at, 
+                boutique_code,
+                e.is_loss !== undefined ? e.is_loss : 0,
+                e.is_paid !== undefined ? e.is_paid : 1
+            ]);
         }
         await client.query('COMMIT');
         res.json({ message: 'Exits synced successfully' });
