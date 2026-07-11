@@ -487,6 +487,7 @@ app.post('/api/sync-inventory', async (req, res) => {
                 brandName VARCHAR(255),
                 description TEXT,
                 tags TEXT,
+                enter_price DECIMAL(15, 2),
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 boutique_code VARCHAR(255)
             )
@@ -494,6 +495,7 @@ app.post('/api/sync-inventory', async (req, res) => {
         await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
         await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS description TEXT');
         await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS tags TEXT');
+        await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS enter_price DECIMAL(15, 2)');
         await client.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS boutique_code VARCHAR(255)`);
         await client.query(`
             CREATE TABLE IF NOT EXISTS sales (
@@ -570,14 +572,27 @@ app.post('/api/sync-inventory', async (req, res) => {
             for (const p of all_products) {
                 const img = p.image_path || p.image || '';
                 await client.query(`
-                    INSERT INTO products (id, name, category, price, quantity, image, brandName, description, tags, boutique_code, updated_at)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, CURRENT_TIMESTAMP)
+                    INSERT INTO products (id, name, category, price, quantity, image, brandName, description, tags, boutique_code, enter_price, updated_at)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, CURRENT_TIMESTAMP)
                     ON CONFLICT (id, boutique_code) DO UPDATE SET
                         name = EXCLUDED.name, category = EXCLUDED.category, price = EXCLUDED.price,
                         quantity = EXCLUDED.quantity, image = EXCLUDED.image, brandName = EXCLUDED.brandName,
                         description = EXCLUDED.description, tags = EXCLUDED.tags,
+                        enter_price = EXCLUDED.enter_price,
                         updated_at = CURRENT_TIMESTAMP
-                `, [p.id, p.name, p.category, p.price, p.quantity || 0, img, p.brandName || '', p.description || '', p.tags || '', boutique_code]);
+                `, [
+                    p.id, 
+                    p.name, 
+                    p.category, 
+                    p.price, 
+                    p.quantity || 0, 
+                    img, 
+                    p.brandName || '', 
+                    p.description || '', 
+                    p.tags || '', 
+                    boutique_code,
+                    p.enter_price !== undefined ? p.enter_price : null
+                ]);
             }
         }
 
