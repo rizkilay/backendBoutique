@@ -1058,8 +1058,8 @@ footer {
   .hero-left { max-width: 100%; }
   .download-buttons,
   .cta-buttons { justify-content: center; }
-  .cards-gallery { margin-top: 400px; justify-content: center; }
-  .hero-right { height: 20px; }
+  .cards-gallery { margin-top: 20px; justify-content: center; }
+  .hero-right { height: 420px; }
   header { padding: 0 24px; }
   .nav-links,
   .watermark-play { display: none; }
