@@ -277,24 +277,29 @@ header.sticky {
   position: relative;
 }
 
-/* box-shadow:none par défaut — évite l'artefact généré par VanillaTilt glare */
-.card {
+/* Override Bootstrap .card — il impose un fond blanc et une bordure qu'on ne veut pas ici */
+.page-container .card {
   overflow: visible;
-  box-shadow: none;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   width: 160px;
 }
 
-.card:hover {
+.page-container .card:hover {
   transform: translateY(-15px) scale(1.04);
 }
 
-.card img {
+.page-container .card img {
   width: 230%;
   height: 100%;
   object-fit: cover;
   display: block;
+  background: transparent;
 }
 
 .card-badge {
