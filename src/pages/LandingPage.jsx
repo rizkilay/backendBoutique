@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import "./landing.css";
-
+import tablette from "../assets/images/landing-page/tablette.png";
+import mobile from "../assets/images/landing-page/mobile.png";
+import windows from "../assets/images/landing-page/windows.png";
 const LandingPage = () => {
 
     useEffect(() => {
@@ -124,16 +126,16 @@ const LandingPage = () => {
                     <div className="cards-gallery animate-fade-in">
                         <div className="card card-low">
                             <div className="card-badge badge-1">MOBILE</div>
-                            <img src="tablette.png" alt="Interface Mobile App" />
+                            <img src={tablette} alt="Interface Mobile App" />
                         </div>
                         {/* Ajout de la référence useRef pour l'animation Tilt */}
                         <div ref={centerCardRef} className="card card-high">
                             <div className="card-badge badge-2 highlight">DESKTOP</div>
-                            <img id="img-centre" src="mobile.png" alt="Interface Windows App" />
+                            <img id="img-centre" src={mobile} alt="Interface Windows App" />
                         </div>
                         <div className="card card-mid">
-                            <div className="card-badge badge-3">WEB</div>
-                            <img src="windows.png" alt="Interface Web App" />
+                            <div className="card-badge badge-3">WINDOWS</div>
+                            <img src={windows} alt="Interface Windows App" />
                         </div>
                     </div>
                 </main>
