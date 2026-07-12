@@ -9,6 +9,7 @@ import MembersPage from './pages/MembersPage';
 import StoresPage from './pages/StoresPage';
 import VendorsPage from './pages/VendorsPage';
 import Layout from './layouts/Layout';
+import LandingPage from './pages/LandingPage';
 
 const ProtectedRoute = ({ children }) => {
     const { isAuthenticated, loading } = useAuth();
@@ -77,7 +78,7 @@ const App = () => {
                             </ProtectedRoute>
                         }
                     />
-                    <Route path="/" element={<Navigate to="/landing-page" />} />
+                    <Route path="/" element={<LandingPage />} />
                 </Routes>
             </Router>
         </AuthProvider>
