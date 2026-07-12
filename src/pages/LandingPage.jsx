@@ -27,7 +27,7 @@ const LandingPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 2. Animation 3D Tilt + Auto-rotation (identique au fichier HTML)
+  // 2. Animation 3D Tilt + Auto-rotation
   useEffect(() => {
     const card = centerCardRef.current;
     if (!card) return;
@@ -74,7 +74,7 @@ const LandingPage = () => {
 
   return (
     <>
-      {/* 0. SVG INJECTÉ POUR LES CLIP-PATHS (INDISPENSABLE POUR LE DESIGN SHOPIFY) */}
+      {/* 0. SVG INJECTÉ POUR LES CLIP-PATHS (DESIGNS SHOPIFY) */}
       <svg width="0" height="0" style={{ position: "absolute" }}>
         <defs>
           <clipPath id="shopify-curve-clip" clipPathUnits="objectBoundingBox">
@@ -331,7 +331,7 @@ const LandingPage = () => {
               </div>
               <div className="collab-text">
                 <h3>Nos domaines d'expertise</h3>
-                <ul style={{ marginLeft: "-45px", marginTop: "32px" }}>
+                <ul className="expertise-list">
                   <li>Réparation de téléphones et d'ordinateurs</li>
                   <li>
                     Vente de pièces de rechange et d'accessoires téléphoniques
@@ -347,7 +347,7 @@ const LandingPage = () => {
           <div className="location-map-wrap">
             <div className="map-card">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.671343717551!2d1.2223946!3d6.1747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTAnMjguOCJOIDHCsDEzJzIwLjYiRQ!5e0!3m2!1sfr!2stg!4v1700000000000!5m2!1sfr!2stg"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.671343717551!2d1.2223946!3d6.1747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTAnMjgorOCJOIDHCsDEzJzIwLjYiRQ!5e0!3m2!1sfr!2stg!4v1700000000000!5m2!1sfr!2stg"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
