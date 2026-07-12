@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import "./landing.css";
 
-// Importation de vos images locales
+// Importation des images locales
 import tablette from "../assets/images/landing-page/tablette.png";
 import mobile from "../assets/images/landing-page/mobile.png";
 import windows from "../assets/images/landing-page/windows.png";
@@ -27,12 +27,11 @@ const LandingPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 2. Animation 3D Tilt + Auto-rotation
+  // 2. Animation 3D Tilt + Auto-rotation sur la carte centrale
   useEffect(() => {
     const card = centerCardRef.current;
     if (!card) return;
 
-    // Initialisation VanillaTilt
     VanillaTilt.init(card, {
       max: 20,
       speed: 800,
@@ -74,7 +73,7 @@ const LandingPage = () => {
 
   return (
     <>
-      {/* 0. SVG INJECTÉ POUR LES CLIP-PATHS (DESIGNS SHOPIFY) */}
+      {/* SVG CLIP-PATHS POUR LE STYLE SHOPIFY */}
       <svg width="0" height="0" style={{ position: "absolute" }}>
         <defs>
           <clipPath id="shopify-curve-clip" clipPathUnits="objectBoundingBox">
@@ -102,28 +101,19 @@ const LandingPage = () => {
       </svg>
 
       <div className="page-container">
-        {/* 1. SECTION HERO SHOPIFY */}
+
+        {/* ── 1. HERO ─────────────────────────────────── */}
         <div className="hero-shopify-wrap">
           <header>
             <div className="logo">
               <i className="fa-solid fa-compass"></i>
-              <span>
-                <strong>AMBASSADE</strong> DECKON
-              </span>
+              <span><strong>AMBASSADE</strong> DECKON</span>
             </div>
             <nav className="nav-links">
-              <a href="#" className="nav-item active">
-                ACCUEIL
-              </a>
-              <a href="#fonctionnalites" className="nav-item">
-                FONCTIONNALITÉS
-              </a>
-              <a href="/signin" className="nav-item">
-                INSCRIPTION
-              </a>
-              <a href="#contact" className="nav-item">
-                CONTACT
-              </a>
+              <a href="#" className="nav-item active">ACCUEIL</a>
+              <a href="#fonctionnalites" className="nav-item">FONCTIONNALITÉS</a>
+              <a href="/signin" className="nav-item">INSCRIPTION</a>
+              <a href="#contact" className="nav-item">CONTACT</a>
             </nav>
           </header>
 
@@ -166,7 +156,7 @@ const LandingPage = () => {
 
               <div ref={centerCardRef} className="card card-high">
                 <div className="card-badge badge-2 highlight">DESKTOP</div>
-                <img id="img-centre" src={mobile} alt="Interface Windows App" />
+                <img id="img-centre" src={mobile} alt="Interface Desktop App" />
               </div>
 
               <div className="card card-mid">
@@ -177,12 +167,9 @@ const LandingPage = () => {
           </main>
         </div>
 
-        {/* 2. SECTION FONCTIONNALITÉS */}
+        {/* ── 2. FONCTIONNALITÉS ──────────────────────── */}
         <div id="fonctionnalites" className="fonction-container">
-          <div
-            className="hero-left animate-slide-up"
-            style={{ animationDelay: "0.2s" }}
-          >
+          <div className="hero-left animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <p className="greeting">Fonctionnalité</p>
             <h1>
               Une gestion <span className="highlight">simple</span> et efficace
@@ -200,10 +187,7 @@ const LandingPage = () => {
             </div>
           </div>
 
-          <div
-            className="hero-right animate-fade-in"
-            style={{ animationDelay: "0.4s" }}
-          >
+          <div className="hero-right animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <div className="watermark-play">
               <i className="fa-solid fa-play"></i>
             </div>
@@ -249,7 +233,7 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* 3. SECTION SERVICES */}
+        {/* ── 3. SERVICES ─────────────────────────────── */}
         <div className="services-container">
           <div className="services-header animate-slide-up">
             <p className="greeting-light">Nos Expertises Terrain</p>
@@ -258,10 +242,9 @@ const LandingPage = () => {
               <span className="highlight-light"> Accompagnement Opérationnel</span>
             </h2>
             <p className="services-description">
-              L'Ambassade Dékon accompagne les entreprises, commerces et
-              organisations dans la digitalisation de leur gestion de stock grâce à
-              des interventions terrain et à l'utilisation de la plateforme Adék
-              Gestion.
+              L'Ambassade Dékon accompagne les entreprises, commerces et organisations
+              dans la digitalisation de leur gestion de stock grâce à des interventions
+              terrain et à l'utilisation de la plateforme Adék Gestion.
             </p>
           </div>
 
@@ -282,16 +265,15 @@ const LandingPage = () => {
               </div>
               <h3>Enregistrement des produits</h3>
               <p>
-                Prise en charge complète de l'enregistrement et de la
-                structuration de l'ensemble de vos produits dans la plateforme en
-                seulement 24 heures.
+                Prise en charge complète de l'enregistrement et de la structuration
+                de l'ensemble de vos produits dans la plateforme en seulement 24 heures.
               </p>
             </div>
             <div className="service-box animate-fade-in">
               <div className="service-icon">
                 <i className="fa-solid fa-clipboard-list"></i>
               </div>
-              <h3>Inventaire & Recensement</h3>
+              <h3>Inventaire &amp; Recensement</h3>
               <p>
                 Comptage physique, contrôle et vérification de vos marchandises
                 afin de garantir des données fiables et actualisées.
@@ -310,19 +292,19 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* 4. SECTION LOCALISATION */}
+        {/* ── 4. QUI SOMMES-NOUS / CARTE ──────────────── */}
         <div id="contact" className="location-container animate-fade-in">
           <div className="location-content">
             <p className="greeting-light">Qui sommes-nous ?</p>
             <h2>
-              Notre Complexe <span className="highlight-light">Tech & Matériel</span>
+              Notre Complexe <span className="highlight-light">Tech &amp; Matériel</span>
             </h2>
 
             <p className="location-description">
-              <strong>L'Ambassade Dékon</strong> est un hub technologique qui
-              développe la solution Adék Gestion, accompagne les entreprises
-              dans la gestion de leurs stocks et propose également des services de
-              maintenance et de vente de matériel informatique et téléphonique.
+              <strong>L'Ambassade Dékon</strong> est un hub technologique qui développe
+              la solution Adék Gestion, accompagne les entreprises dans la gestion de
+              leurs stocks et propose également des services de maintenance et de vente
+              de matériel informatique et téléphonique.
             </p>
 
             <div className="collab-box">
@@ -333,9 +315,7 @@ const LandingPage = () => {
                 <h3>Nos domaines d'expertise</h3>
                 <ul className="expertise-list">
                   <li>Réparation de téléphones et d'ordinateurs</li>
-                  <li>
-                    Vente de pièces de rechange et d'accessoires téléphoniques
-                  </li>
+                  <li>Vente de pièces de rechange et d'accessoires téléphoniques</li>
                   <li>Commercialisation de matériel informatique</li>
                   <li>Développement d'applications web et mobiles</li>
                   <li>Accompagnement à la digitalisation des entreprises</li>
@@ -347,7 +327,7 @@ const LandingPage = () => {
           <div className="location-map-wrap">
             <div className="map-card">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.671343717551!2d1.2223946!3d6.1747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTAnMjgorOCJOIDHCsDEzJzIwLjYiRQ!5e0!3m2!1sfr!2stg!4v1700000000000!5m2!1sfr!2stg"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.671343717551!2d1.2223946!3d6.1747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTAnMjguOCJOIDHCsDEzJzIwLjYiRQ!5e0!3m2!1sfr!2stg!4v1700000000000!5m2!1sfr!2stg"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -357,31 +337,23 @@ const LandingPage = () => {
                 title="Localisation Ambassade Dékon"
               ></iframe>
               <div className="map-badge">
-                <i className="fa-solid fa-location-dot"></i> Quartier Deckon, Lomé
-                - Togo
+                <i className="fa-solid fa-location-dot"></i> Quartier Deckon, Lomé - Togo
               </div>
             </div>
           </div>
         </div>
 
-        {/* FOOTER */}
+        {/* ── FOOTER ──────────────────────────────────── */}
         <footer>
           <div className="footer-tag">@SUIVEZ-NOUS</div>
           <div className="social-icons">
-            <a href="#">
-              <i className="fa-brands fa-facebook-f"></i>
-            </a>
-            <a href="#">
-              <i className="fa-brands fa-instagram"></i>
-            </a>
-            <a href="#">
-              <i className="fa-brands fa-linkedin-in"></i>
-            </a>
-            <a href="#">
-              <i className="fa-brands fa-x-twitter"></i>
-            </a>
+            <a href="#"><i className="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i className="fa-brands fa-instagram"></i></a>
+            <a href="#"><i className="fa-brands fa-linkedin-in"></i></a>
+            <a href="#"><i className="fa-brands fa-x-twitter"></i></a>
           </div>
         </footer>
+
       </div>
     </>
   );
