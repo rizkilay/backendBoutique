@@ -62,7 +62,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 60px;
-  height: 100px;
+  height: 60px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   width: 100%;
@@ -466,40 +466,44 @@ header.sticky {
   transform: translateY(-2px);
 }
 
-.btn-primary-video {
-  background: var(--primary-color);
-  color: var(--white);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 36px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 10px 25px rgba(4, 106, 107, 0.25);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.page-container .btn-primary-video {
+  background: var(--primary-color) !important;
+  color: var(--white) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  padding: 14px 36px !important;
+  border-radius: 14px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(4, 106, 107, 0.25) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-decoration: none !important;
 }
 
-.btn-primary-video i {
-  font-size: 18px;
-  transition: transform 0.3s ease;
+.page-container .btn-primary-video i {
+  font-size: 18px !important;
+  transition: transform 0.3s ease !important;
+  color: var(--white) !important;
 }
 
-.btn-primary-video:hover {
-  background-color: var(--dark-color);
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(26, 46, 53, 0.3);
+.page-container .btn-primary-video:hover {
+  background-color: var(--dark-color) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 15px 30px rgba(26, 46, 53, 0.3) !important;
+  color: var(--white) !important;
 }
 
-.btn-primary-video:hover i {
-  transform: scale(1.15);
+.page-container .btn-primary-video:hover i {
+  transform: scale(1.15) !important;
+  color: var(--white) !important;
 }
 
-.btn-primary-video:active {
-  transform: translateY(-1px);
+.page-container .btn-primary-video:active {
+  transform: translateY(-1px) !important;
 }
 
 /* ── SECTION DROITE (VISUEL PROFILE) ── */
@@ -555,62 +559,74 @@ header.sticky {
 }
 
 /* ── BADGES FLOTTANTS ── */
-.badge {
-  position: absolute;
-  background: var(--white);
-  padding: 14px 20px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
-  z-index: 3;
+.page-container .float-badge {
+  position: absolute !important;
+  background: #ffffff !important;
+  padding: 14px 20px !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08) !important;
+  z-index: 3 !important;
   animation: float 4s ease-in-out infinite;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease !important;
+  white-space: normal !important;
+  text-align: left !important;
+  line-height: normal !important;
+  width: auto !important;
+  height: auto !important;
 }
 
-.badge-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
+.page-container .float-badge .badge-text {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  text-align: left !important;
 }
 
-.badge-num {
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--text-dark);
-  line-height: 1.2;
+.page-container .float-badge .badge-num {
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  color: var(--text-dark, #0f172a) !important;
+  line-height: 1.2 !important;
+  display: block !important;
+  white-space: nowrap !important;
 }
 
-.badge-label {
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.2;
+.page-container .float-badge .badge-label {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #64748b !important; /* Couleur explicite grise pour éviter le blanc hérité de Bootstrap */
+  line-height: 1.2 !important;
+  display: block !important;
+  white-space: nowrap !important;
 }
 
-.badge-top    { top: 10%;    left: 5%;   animation-delay: 0s; }
-.badge-right  { top: 35%;   right: 9%;  animation-delay: 1s; }
-.badge-bottom { bottom: 5%; left: 10%;  animation-delay: 2s; }
+.page-container .badge-top    { top: 10% !important;    left: 5% !important;   animation-delay: 0s !important; }
+.page-container .badge-right  { top: 35% !important;   right: 9% !important;  animation-delay: 1s !important; }
+.page-container .badge-bottom { bottom: 5% !important; left: 10% !important;  animation-delay: 2s !important; }
 
-.badge:hover {
-  transform: scale(1.08);
-  z-index: 10;
+.page-container .float-badge:hover {
+  transform: scale(1.08) !important;
+  z-index: 10 !important;
 }
 
-.badge-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--white);
-  font-size: 16px;
+.page-container .float-badge .badge-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  flex-shrink: 0 !important;
 }
 
-.icon-green { background-color: var(--accent-green); }
-.icon-teal  { background-color: var(--accent-teal); }
+.page-container .icon-green { background-color: var(--accent-green) !important; }
+.page-container .icon-teal  { background-color: var(--accent-teal) !important; }
 
 /* ── ANIMATIONS GLOBALES ── */
 .animate-fade-in {

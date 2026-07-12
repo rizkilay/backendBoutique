@@ -130,19 +130,15 @@ const LandingPage = () => {
               </p>
 
               <div className="download-section">
-                <p className="download-label">Disponible sur toutes vos plateformes</p>
+                <p className="download-label">Télécharger pour</p>
                 <div className="download-buttons">
-                  <a href="#" className="btn-download" title="Télécharger sur Mobile">
-                    <i className="fa-solid fa-mobile-button"></i>
-                    <span>Mobile</span>
-                  </a>
                   <a href="#" className="btn-download" title="Télécharger pour Windows">
                     <i className="fa-brands fa-windows"></i>
                     <span>Windows</span>
                   </a>
                   <a href="/signin" className="btn-download" title="Accéder à la version Web">
-                    <i className="fa-solid fa-globe"></i>
-                    <span>Web App</span>
+                    <i className="fa-brands fa-android"></i>
+                    <span>Android</span>
                   </a>
                 </div>
               </div>
@@ -180,7 +176,7 @@ const LandingPage = () => {
               d'une interface simple et intuitive.
             </p>
             <div className="cta-buttons">
-              <button className="btn btn-primary-video">
+              <button className="btn-primary-video">
                 <i className="fa-solid fa-circle-play"></i>
                 <span>Voir la vidéo</span>
               </button>
@@ -201,7 +197,7 @@ const LandingPage = () => {
               />
             </div>
 
-            <div className="badge badge-top">
+            <div className="float-badge badge-top">
               <div className="badge-icon icon-green">
                 <i className="fa-solid fa-layer-group"></i>
               </div>
@@ -211,7 +207,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="badge badge-right">
+            <div className="float-badge badge-right">
               <div className="badge-icon icon-teal">
                 <i className="fa-solid fa-briefcase"></i>
               </div>
@@ -221,7 +217,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="badge badge-bottom">
+            <div className="float-badge badge-bottom">
               <div className="badge-icon icon-teal">
                 <i className="fa-solid fa-money-bill-wave"></i>
               </div>
