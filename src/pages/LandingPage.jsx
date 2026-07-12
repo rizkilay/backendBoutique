@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "./landing.css";
+import "../assets/js/vanilla-tilt.js"; // Assurez-vous que VanillaTilt est installé via npm ou yarn
 import tablette from "../assets/images/landing-page/tablette.png";
 import mobile from "../assets/images/landing-page/mobile.png";
 import windows from "../assets/images/landing-page/windows.png";
