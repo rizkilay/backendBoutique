@@ -325,6 +325,7 @@ header.sticky {
 
 .card-low  { height: 280px; margin-top: 60px; }
 .card-high { height: 400px; margin-top: -20px; width: 190px; z-index: 10 !important; }
+.card-high img { width: 190%; }
 .card-mid  { height: 360px; margin-top: 40px; }
 
 /* ── RESPONSIVE GALERIE ── */
@@ -1076,8 +1077,4 @@ footer {
   }
   .card-high { width: 160px; }
   .sub-title { letter-spacing: 4px; }
-}
-
-#img-centre{
-  height: 450px;
 }
