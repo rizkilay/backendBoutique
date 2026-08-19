@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from "react";
 import "./landing.css";
 
 // Importation des images locales
-import tablette from "../assets/images/landing-page/tablette.png";
+import tablette from "../assets/images/landing-page/tab.png";
 import mobile from "../assets/images/landing-page/mobile.png";
-import windows from "../assets/images/landing-page/windows.png";
+import windows from "../assets/images/landing-page/ordi.png";
 
 // Importation de VanillaTilt
 import VanillaTilt from "vanilla-tilt";
