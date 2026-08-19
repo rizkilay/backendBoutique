@@ -383,6 +383,13 @@ header.sticky {
     margin: 0 auto;
   }
 
+  #img-centre {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    margin-left: 120px;
+  }
+
   .card-low {
     order: 1;
     margin-top: 10px;
