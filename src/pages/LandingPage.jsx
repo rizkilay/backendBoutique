@@ -146,17 +146,17 @@ const LandingPage = () => {
 
             <div className="cards-gallery animate-fade-in">
               <div className="card card-low">
-                <div className="card-badge badge-1">MOBILE</div>
+                <div className="card-badge badge-1">Tablette</div>
                 <img src={tablette} alt="Interface Mobile App" />
               </div>
 
               <div ref={centerCardRef} className="card card-high">
-                <div className="card-badge badge-2 highlight">DESKTOP</div>
+                <div className="card-badge badge-2 highlight">MOBILE</div>
                 <img id="img-centre" src={mobile} alt="Interface Desktop App" />
               </div>
 
               <div className="card card-mid">
-                <div className="card-badge badge-3">WEB</div>
+                <div className="card-badge badge-3">Windows</div>
                 <img src={windows} alt="Interface Web App" />
               </div>
             </div>

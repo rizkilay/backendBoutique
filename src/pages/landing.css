@@ -1077,3 +1077,7 @@ footer {
   .card-high { width: 160px; }
   .sub-title { letter-spacing: 4px; }
 }
+
+#img-centre{
+  height: 450px;
+}
