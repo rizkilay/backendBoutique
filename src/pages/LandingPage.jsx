@@ -137,7 +137,7 @@ const LandingPage = () => {
                     <i className="fa-brands fa-windows"></i>
                     <span>Windows</span>
                   </a>
-                  <a href="/signin" className="btn-download" title="Accéder à la version Web">
+                  <a href="#" className="btn-download" title="Télécharger l'application Android bientôt disponible">
                     <i className="fa-brands fa-android"></i>
                     <span>Android</span>
                   </a>
