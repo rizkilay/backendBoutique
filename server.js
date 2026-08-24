@@ -6,12 +6,16 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 require('dotenv').config();
 
+const path = require('path');
+
 const app = express();
 const port = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'boutique_secret_key_2024_very_long_and_secure';
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'src', 'public')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 const poolConfig = process.env.DATABASE_URL 
     ? {

@@ -1,0 +1,107 @@
+/* ============================================================
+   PAGE TÉLÉCHARGEMENT MINIMALE FINANCE APP
+   ============================================================ */
+
+.finance-download-only-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #046a6b 0%, #1a2e35 100%);
+  padding: 20px;
+  font-family: "Montserrat", "Poppins", sans-serif;
+}
+
+.finance-download-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 50px 40px;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  max-width: 440px;
+  width: 100%;
+  animation: popIn 0.4s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.finance-icon-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(4, 106, 107, 0.1);
+  color: #046a6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 20px auto;
+}
+
+.finance-download-card h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.finance-download-card .subtitle {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 35px;
+}
+
+.btn-simple-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: #046a6b;
+  color: #ffffff !important;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 28px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 20px rgba(4, 106, 107, 0.3);
+  cursor: pointer;
+  border: none;
+  width: 100%;
+}
+
+.btn-simple-download:hover {
+  background-color: #034b4c;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(4, 106, 107, 0.4);
+}
+
+.btn-simple-download:active {
+  transform: translateY(-1px);
+}
+
+.btn-simple-download i {
+  font-size: 18px;
+}
+
+.download-success-msg {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #10b981;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
