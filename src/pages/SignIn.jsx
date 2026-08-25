@@ -35,7 +35,7 @@ const SignIn = () => {
                             <img
                                 src="/assets/images/logo.png"
                                 alt="Logo Adék"
-                                style={{ height: '48px', width: 'auto', maxWidth: '120px', objectFit: 'contain', borderRadius: '8px' }}
+                                style={{ height: '30px', width: 'auto', maxWidth: '120px', objectFit: 'contain', borderRadius: '8px' }}
                             />
                             <span className="fw-bold fs-4 text-dark">Adék</span>
                         </Link>
