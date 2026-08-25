@@ -32,7 +32,7 @@ const SignIn = () => {
                 <div className="card-body p-5">
                     <div className="text-center mb-3">
                         <Link to="/" className="mb-4 d-inline-block">
-                            <img src="/assets/images/logo-icon.svg" alt="" width="36" />
+                            <img src="/assets/images/logo.svg" alt="" width="36" />
                             <span className="ms-2">
                                 <img src="/assets/images/logo.svg" alt="" />
                             </span>

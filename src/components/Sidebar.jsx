@@ -9,7 +9,7 @@ const Sidebar = () => {
         <aside id="sidebar" className="sidebar">
             <div className="logo-area">
                 <Link to="/dashboard" className="d-inline-flex">
-                    <img src="/assets/images/logo-icon.svg" alt="Logo" width="24" />
+                    <img src="/assets/images/logo.svg" alt="Logo" width="24" />
                     <span className="logo-text ms-2">
                         <img src="/assets/images/logo.svg" alt="Logo" />
                     </span>
