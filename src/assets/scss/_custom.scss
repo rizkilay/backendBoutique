@@ -61,6 +61,15 @@
 		padding-left: 17px;
 		color: $gray-800;
     border-bottom: 1px solid $gray-200;
+
+		.sidebar-brand-logo {
+			height: 36px;
+			width: auto;
+			max-width: 120px;
+			object-fit: contain;
+			border-radius: 6px;
+			transition: all 0.2s ease;
+		}
 	}
 }
 .sidebar.collapsed {
@@ -75,6 +84,10 @@
 	}
 	.logo-text {
 		display: none;
+	}
+	.sidebar-brand-logo {
+		height: 28px;
+		max-width: 34px;
 	}
 }
 .topbar {

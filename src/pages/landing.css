@@ -105,7 +105,19 @@ header.sticky {
   letter-spacing: 1.5px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+}
+
+.landing-header-logo {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  filter: brightness(0) invert(1); /* rend le logo blanc sur fond sombre */
+}
+
+.landing-header-logo:hover {
+  transform: scale(1.06);
 }
 
 .logo i {
@@ -179,6 +191,20 @@ header.sticky {
 
 .title-container {
   margin-bottom: 20px;
+}
+
+.title-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.landing-hero-logo {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) brightness(0) invert(1);
 }
 
 .main-title {

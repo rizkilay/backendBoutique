@@ -31,11 +31,13 @@ const SignIn = () => {
             <div className="card" style={{ maxWidth: '420px', width: '100%' }}>
                 <div className="card-body p-5">
                     <div className="text-center mb-3">
-                        <Link to="/" className="mb-4 d-inline-block">
-                            <img src="/assets/images/logo.svg" alt="" width="36" />
-                            <span className="ms-2">
-                                <img src="/assets/images/logo.svg" alt="" />
-                            </span>
+                        <Link to="/" className="mb-4 d-inline-flex align-items-center justify-content-center text-decoration-none gap-2">
+                            <img
+                                src="/assets/images/logo.png"
+                                alt="Logo Adék"
+                                style={{ height: '48px', width: 'auto', maxWidth: '120px', objectFit: 'contain', borderRadius: '8px' }}
+                            />
+                            <span className="fw-bold fs-4 text-dark">Adék</span>
                         </Link>
                         <h1 className="card-title mb-1 h5">Connexion au Back-Office</h1>
                         <p className="text-muted small mb-4">Entrez vos identifiants pour accéder au tableau de bord</p>

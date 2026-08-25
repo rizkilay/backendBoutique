@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./landing.css";
 
+import logoImg from "../assets/images/logo.png";
+
 // Importation des images locales
 import tablette from "../assets/images/landing-page/tab.png";
 import mobile from "../assets/images/landing-page/mobile.png";
@@ -107,7 +109,7 @@ const LandingPage = () => {
         <div className="hero-shopify-wrap">
           <header>
             <div className="logo">
-              <i className="fa-solid fa-compass"></i>
+              <img src={logoImg} alt="Logo Adék" className="landing-header-logo" />
               <span><strong>AMBASSADE</strong> DECKON</span>
             </div>
             <nav className="nav-links">
@@ -121,8 +123,12 @@ const LandingPage = () => {
           <main className="main-content">
             <div className="hero-text-section animate-slide-up">
               <div className="title-container">
-                <h1 className="main-title">Adék</h1>
-                <h2 className="sub-title">GESTION</h2>
+                <div className="title-brand-wrap">
+                  <div className="title-text-group">
+                    <h1 className="main-title">Adék</h1>
+                    <h2 className="sub-title">GESTION</h2>
+                  </div>
+                </div>
               </div>
               <p className="description">
                 Gérez facilement les entrées et sorties de vos produits, vos dépenses,

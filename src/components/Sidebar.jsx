@@ -8,10 +8,10 @@ const Sidebar = () => {
     return (
         <aside id="sidebar" className="sidebar">
             <div className="logo-area">
-                <Link to="/dashboard" className="d-inline-flex">
-                    <img src="/assets/images/logo.svg" alt="Logo" width="24" />
-                    <span className="logo-text ms-2">
-                        <img src="/assets/images/logo.svg" alt="Logo" />
+                <Link to="/dashboard" className="d-inline-flex align-items-center text-decoration-none">
+                    <img src="/assets/images/logo.png" alt="Adék Logo" className="sidebar-brand-logo" />
+                    <span className="logo-text ms-2 fw-bold text-dark fs-5">
+                        Adék
                     </span>
                 </Link>
             </div>
