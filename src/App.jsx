@@ -11,6 +11,7 @@ import VendorsPage from './pages/VendorsPage';
 import Layout from './layouts/Layout';
 import LandingPage from './pages/LandingPage';
 import FinanceAppPage from './pages/FinanceAppPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 const ProtectedRoute = ({ children }) => {
     const { isAuthenticated, loading } = useAuth();
@@ -81,6 +82,7 @@ const App = () => {
                     />
                     <Route path="/finance-app" element={<FinanceAppPage />} />
                     <Route path="/financeapp" element={<FinanceAppPage />} />
+                    <Route path="/politique-confidentialite" element={<PrivacyPolicyPage />} />
                     <Route path="/" element={<LandingPage />} />
                 </Routes>
             </Router>

@@ -349,6 +349,9 @@ const LandingPage = () => {
         {/* ── FOOTER ──────────────────────────────────── */}
         <footer>
           <div className="footer-tag">@SUIVEZ-NOUS</div>
+          <Link to="/politique-confidentialite" className="privacy-link">
+            Politique de confidentialité
+          </Link>
           <div className="social-icons">
             <a href="#"><i className="fa-brands fa-facebook-f"></i></a>
             <a href="#"><i className="fa-brands fa-instagram"></i></a>

@@ -1056,6 +1056,18 @@ footer {
   gap: 12px;
 }
 
+.privacy-link {
+  color: #ffffff;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.privacy-link:hover,
+.privacy-link:focus-visible {
+  color: #d1fae5;
+}
+
 .social-icons a {
   color: var(--primary-color);
   background-color: #ffffff;
