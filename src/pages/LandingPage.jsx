@@ -139,7 +139,7 @@ const LandingPage = () => {
               <div className="download-section">
                 <p className="download-label">Télécharger pour</p>
                 <div className="download-buttons">
-                  <a href="#" className="btn-download" title="Télécharger pour Windows">
+                  <a href="https://get.microsoft.com/installer/download/9pbq2fdgs7rl?referrer=appbadge" className="btn-download" title="Télécharger pour Windows" target="_self">
                     <i className="fa-brands fa-windows"></i>
                     <span>Windows</span>
                   </a>
